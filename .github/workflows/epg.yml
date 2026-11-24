@@ -2,11 +2,11 @@ name: Build EPG guide
 
 on:
   schedule:
-    - cron: "30 1 * * *" # daily at 01:30 UTC (~07:00 IST)
-  workflow_dispatch: {} # lets you run it manually from the Actions tab
+    - cron: "30 1 * * *"
+  workflow_dispatch: {}
 
 permissions:
-  contents: write # needed to publish the release asset
+  contents: write
 
 jobs:
   build:
@@ -24,9 +24,9 @@ jobs:
         working-directory: engine
         run: npm install
 
-      - name: Grab the Tata Play guide
+      - name: Grab the Tata Play + Dish TV guide
         working-directory: engine
-        run: npm run grab --- --sites=tataplay.com --maxConnections=10 --days=2 --gzip --output=guide.xml
+        run: npm run grab --- --sites=tataplay.com,dishtv.in --maxConnections=3 --delay=500 --timeout=45000 --days=2 --gzip --output=guide.xml
 
       - name: Publish guide.xml.gz as the "latest" release
         uses: softprops/action-gh-release@v2
