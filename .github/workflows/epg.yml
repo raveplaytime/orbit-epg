@@ -24,9 +24,9 @@ jobs:
         working-directory: engine
         run: npm install
 
-      - name: Grab the Tata Play + Dish TV guide
+      - name: Grab all anonymous India guides
         working-directory: engine
-        run: npm run grab --- --sites=tataplay.com,dishtv.in --maxConnections=3 --delay=500 --timeout=45000 --days=2 --gzip --output=guide.xml
+        run: npm run grab --- --sites=tataplay.com,dishtv.in,airtelxstream.in,aljazeera.com --maxConnections=3 --delay=500 --timeout=25000 --days=2 --gzip --output=guide.xml
 
       - name: Publish guide.xml.gz as the "latest" release
         uses: softprops/action-gh-release@v2
