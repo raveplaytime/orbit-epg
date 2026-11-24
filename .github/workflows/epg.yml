@@ -1,0 +1,36 @@
+name: Build EPG guide
+
+on:
+  schedule:
+    - cron: "30 1 * * *" # daily at 01:30 UTC (~07:00 IST)
+  workflow_dispatch: {} # lets you run it manually from the Actions tab
+
+permissions:
+  contents: write # needed to publish the release asset
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Get the iptv-org/epg engine
+        run: git clone --depth 1 https://github.com/iptv-org/epg.git engine
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install engine dependencies
+        working-directory: engine
+        run: npm install
+
+      - name: Grab the Tata Play guide
+        working-directory: engine
+        run: npm run grab --- --sites=tataplay.com --maxConnections=10 --days=2 --gzip --output=guide.xml
+
+      - name: Publish guide.xml.gz as the "latest" release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest EPG guide
+          files: engine/guide.xml.gz
